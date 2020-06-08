@@ -8,10 +8,24 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/tsvobo/go-workshop-http/client/internal/client"
 	"github.com/tsvobo/go-workshop-http/client/internal/logger"
+	"github.com/tsvobo/go-workshop-http/client/internal/metrics"
 	"github.com/tsvobo/go-workshop-http/client/internal/service"
+)
+
+var (
+	histVec = promauto.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Name:    "request_duration_seconds",
+			Help:    "A histogram of request durations.",
+			Buckets: prometheus.DefBuckets,
+		},
+		[]string{"destination", "endpoint", "code"},
+	)
 )
 
 func main() {
@@ -21,8 +35,11 @@ func main() {
 	ctx := context.Background()
 
 	// TODO TASK-6: Add tracing middleware (zipkinhttp)
-	// TODO TASK-5.1: Add prometheus middleware and register request_duration_seconds histogramVec
-	rt := http.DefaultTransport
+	// TODO TASK-5.1: Add prometheus middleware and register histogramVec
+	rt := metrics.InstrumentRoundTripperDuration(
+		histVec.MustCurryWith(prometheus.Labels{"destination": "task-service"}),
+		http.DefaultTransport,
+	)
 
 	// Create Task (HTTP) client
 	taskClient, err := client.NewTask("http://127.0.0.1:8080", &http.Client{Timeout: 30 * time.Second, Transport: rt})

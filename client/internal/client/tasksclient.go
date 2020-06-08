@@ -56,7 +56,17 @@ func (c *Task) Create(ctx context.Context, task model.Task) (model.Task, error) 
 
 // TODO TASK-4: Implement task retrieval using GET request
 func (c *Task) Find(ctx context.Context, id string) (model.Task, error) {
-	return model.Task{}, nil
+	req, err := c.newRequest(http.MethodGet, fmt.Sprintf("/v1/tasks/%s", id), nil)
+	if err != nil {
+		return model.Task{}, errors.Wrap(err, "task retrieval failed")
+	}
+
+	var payload model.Task
+	if err = c.do(ctx, req, &payload); err != nil {
+		return model.Task{}, errors.Wrap(err, "task retrieval failed")
+	}
+
+	return payload, nil
 }
 
 func (c *Task) newRequest(method, path string, body interface{}) (*http.Request, error) {

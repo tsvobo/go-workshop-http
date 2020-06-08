@@ -20,8 +20,8 @@ func main() {
 
 	ctx := context.Background()
 
-	// TODO: Add tracing middleware (zipkinhttp)
-	// TODO: Add prometheus middleware and register request_duration_seconds histogramVec
+	// TODO TASK-6: Add tracing middleware (zipkinhttp)
+	// TODO TASK-5.1: Add prometheus middleware and register request_duration_seconds histogramVec
 	rt := http.DefaultTransport
 
 	// Create Task (HTTP) client

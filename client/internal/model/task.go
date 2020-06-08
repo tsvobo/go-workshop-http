@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-// TODO: Add json tags
-// TODO: Add validation tags
+// TODO TASK-1: Add json tags
+// TODO TASK-2: Add validation tags
 type Task struct {
 	ID      string
 	Title   string

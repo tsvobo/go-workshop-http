@@ -39,12 +39,12 @@ func NewTask(baseUrl string, client *http.Client) (Task, error) {
 	return Task{u, client}, nil
 }
 
-// TODO: Implement task creation using POST request
+// TODO TASK-3: Implement task creation using POST request
 func (c *Task) Create(ctx context.Context, task model.Task) (model.Task, error) {
 	return model.Task{}, nil
 }
 
-// TODO: Implement task retrieval using GET request
+// TODO TASK-4: Implement task retrieval using GET request
 func (c *Task) Find(ctx context.Context, id string) (model.Task, error) {
 	return model.Task{}, nil
 }

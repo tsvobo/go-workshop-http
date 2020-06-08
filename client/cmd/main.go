@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"time"
 
+	zipkinhttp "github.com/openzipkin/zipkin-go/middleware/http"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -15,6 +16,7 @@ import (
 	"github.com/tsvobo/go-workshop-http/client/internal/logger"
 	"github.com/tsvobo/go-workshop-http/client/internal/metrics"
 	"github.com/tsvobo/go-workshop-http/client/internal/service"
+	"github.com/tsvobo/go-workshop-http/client/internal/trace"
 )
 
 var (
@@ -35,10 +37,14 @@ func main() {
 	ctx := context.Background()
 
 	// TODO TASK-6: Add tracing middleware (zipkinhttp)
+	zrt, err := zipkinhttp.NewTransport(
+		trace.Tracer,
+		zipkinhttp.TransportTrace(true),
+	)
 	// TODO TASK-5.1: Add prometheus middleware and register histogramVec
 	rt := metrics.InstrumentRoundTripperDuration(
 		histVec.MustCurryWith(prometheus.Labels{"destination": "task-service"}),
-		http.DefaultTransport,
+		zrt,
 	)
 
 	// Create Task (HTTP) client

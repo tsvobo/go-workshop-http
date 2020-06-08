@@ -41,7 +41,17 @@ func NewTask(baseUrl string, client *http.Client) (Task, error) {
 
 // TODO TASK-3: Implement task creation using POST request
 func (c *Task) Create(ctx context.Context, task model.Task) (model.Task, error) {
-	return model.Task{}, nil
+	req, err := c.newRequest(http.MethodPost, "/v1/tasks", task)
+	if err != nil {
+		return model.Task{}, errors.Wrap(err, "task creation failed")
+	}
+
+	var payload model.Task
+	if err = c.do(ctx, req, &payload); err != nil {
+		return model.Task{}, errors.Wrap(err, "task creation failed")
+	}
+	err = validate.Struct(payload)
+	return payload, err
 }
 
 // TODO TASK-4: Implement task retrieval using GET request
